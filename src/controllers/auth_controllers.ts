@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import jwt, { type SignOptions } from "jsonwebtoken";
 
 import User from "../models/user.model";
@@ -38,7 +38,7 @@ export const register = async (req: Request, res: Response) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
     const user = await User.create({
       name,
       email,
@@ -75,7 +75,7 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
         message: "Invalid email or password",
