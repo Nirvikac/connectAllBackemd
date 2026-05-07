@@ -1,6 +1,8 @@
 import { Router, Request, Response } from "express";
-import dotenv from "dotenv";
-dotenv.config();
+import Conversation from "../models/conversation";
+import Message from "../models/message";
+import { getIO } from "../socket/index";
+
 const router = Router();
 
 router.get("/", (req: Request, res: Response) => {
@@ -9,7 +11,6 @@ router.get("/", (req: Request, res: Response) => {
   const challenge = req.query["hub.challenge"];
 
   if (mode === "subscribe" && token === process.env.WEBHOOK_VERIFY_TOKEN) {
-    console.log("WEBHOOK_VERIFIED");
     res.status(200).send(challenge);
   } else {
     res.sendStatus(403);
@@ -17,7 +18,7 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-  res.sendStatus(200); // always ACK immediately
+  res.sendStatus(200);
 
   const body = req.body;
   if (body.object !== "whatsapp_business_account") return;
@@ -30,8 +31,31 @@ router.post("/", async (req: Request, res: Response) => {
   const text = message.text?.body;
   const externalMessageId = message.id;
 
-  console.log(`Message from ${from}: ${text}`);
+  // Find or create conversation
+  let conversation = await Conversation.findOne({ externalId: from });
+  if (!conversation) {
+    conversation = await Conversation.create({
+      externalId: from,
+      platform: "whatsapp",
+      participants: [],
+    });
+  }
 
-  // Next step: save to MongoDB + emit via Socket.IO
+  // Save message
+  const newMessage = await Message.create({
+    conversation: conversation._id,
+    content: text,
+    sender: "customer",
+    externalMessageId,
+    externalUserId: from,
+  });
+
+  // Emit via Socket.IO
+  getIO()
+    .to(`conversation:${conversation._id}`)
+    .emit("message:new", newMessage);
+
+  console.log(`Saved message from ${from}: ${text}`);
 });
+
 export default router;
