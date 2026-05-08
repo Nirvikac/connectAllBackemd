@@ -44,11 +44,10 @@ router.post("/", async (req: Request, res: Response) => {
   // Save message to MongoDB
   const newMessage = await Message.create({
     conversationId: conversation._id,
-    externalId: from,
-    senderId: from,
-    text: text,
-    sender: "customer",
-    etxternalMessageId: externalMessageId,
+    externalMessageId: externalMessageId,
+    direction: "inbound",
+    content: text,
+    messageType: "text",
   });
   // Emit via Socket.IO
   getIO()
