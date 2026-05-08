@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema(
       ref: "Conversation",
       required: true,
     },
-    etxternalMessageId: {
+    externalMessageId: {
       type: String,
       required: true,
       sparse: true,
