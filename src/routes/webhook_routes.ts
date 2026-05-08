@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import Conversation from "../models/conversation";
 import Message from "../models/message";
-import { getIO } from "../socket/index";
+import { getIO } from "../socket";
 
 const router = Router();
 
@@ -34,22 +34,22 @@ router.post("/", async (req: Request, res: Response) => {
   // Find or create conversation
   let conversation = await Conversation.findOne({ externalId: from });
   if (!conversation) {
-    conversation = await Conversation.create({
-      externalId: from,
+    conversation = new Conversation({
       platform: "whatsapp",
-      participants: [],
+      externalId: from,
+      participant: [],
     });
   }
 
-  // Save message
+  // Save message to MongoDB
   const newMessage = await Message.create({
-    conversation: conversation._id,
-    content: text,
+    conversationId: conversation._id,
+    externalId: from,
+    senderId: from,
+    text: text,
     sender: "customer",
-    externalMessageId,
-    externalUserId: from,
+    etxternalMessageId: externalMessageId,
   });
-
   // Emit via Socket.IO
   getIO()
     .to(`conversation:${conversation._id}`)
