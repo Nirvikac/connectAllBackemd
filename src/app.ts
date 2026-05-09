@@ -1,4 +1,5 @@
 import express from "express";
+import whatsappRoutes from "./routes/whatsapp_routes";
 import authRoutes from "./routes/auth_routes";
 import conversationRoutes from "./routes/conversations";
 import messageRoutes from "./routes/messages";
@@ -13,4 +14,5 @@ app.use("/api/auth", authRoutes);
 app.use("/api/conversations", protect, conversationRoutes);
 app.use("/api/messages", protect, messageRoutes);
 app.use("/api/webhook", webhookRouter);
+app.use("/api/whatsapp", protect, whatsappRoutes);
 export default app;

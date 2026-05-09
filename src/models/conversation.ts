@@ -47,4 +47,7 @@ conversationSchema.index({ userId: 1, externalId: 1 }, { unique: true });
 
 export type ConversationSchema = InferSchemaType<typeof conversationSchema>;
 
-export default mongoose.model<ConversationSchema>("Conversation", conversationSchema);
+export default mongoose.model<ConversationSchema>(
+  "Conversation",
+  conversationSchema,
+);

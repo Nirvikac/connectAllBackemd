@@ -1,18 +1,9 @@
 import type { Request, Response } from "express";
 import Conversation from "../models/conversation";
 
-// ✅ res added as second param
-const getUserId = (_req: Request, res: Response): string | null => {
-  const user = res.locals.user;
-  if (!user || typeof user === "string") return null;
-  const maybeId = (user as { id?: unknown }).id;
-  if (!maybeId) return null;
-  return String(maybeId);
-};
-
 export const getConversations = async (req: Request, res: Response) => {
   try {
-    const userId = getUserId(req, res); // ✅ pass res
+    const userId = res.locals.user?.id;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -52,7 +43,7 @@ export const getConversations = async (req: Request, res: Response) => {
 
 export const getConversationById = async (req: Request, res: Response) => {
   try {
-    const userId = getUserId(req, res); // ✅ pass res
+    const userId = res.locals.user?.id;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -75,7 +66,7 @@ export const getConversationById = async (req: Request, res: Response) => {
 
 export const markAsRead = async (req: Request, res: Response) => {
   try {
-    const userId = getUserId(req, res); // ✅ pass res
+    const userId = res.locals.user?.id; // ✅ pass res
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -93,7 +84,7 @@ export const markAsRead = async (req: Request, res: Response) => {
 
 export const createConversation = async (req: Request, res: Response) => {
   try {
-    const userId = getUserId(req, res);
+    const userId = res.locals.user?.id;
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }

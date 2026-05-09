@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { JwtUserPayload } from "../types/auth.type"; // or relative path
 
 export const protect = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers["authorization"];
@@ -22,7 +23,13 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const decoded = jwt.verify(token, jwtSecret);
-    res.locals.user = decoded;
+    if (typeof decoded !== "object" || decoded === null) {
+      throw new Error("Invalid token");
+    }
+
+    const user = decoded as JwtUserPayload;
+
+    res.locals.user = user;
     next();
   } catch (err) {
     console.log("JWT Error:", err); // 🆕 add this

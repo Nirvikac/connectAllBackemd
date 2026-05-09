@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "typeRoots": ["./node_modiles/@type", "/.src/types"]
    },
   "include": ["src/**/*", "server.ts"],
   "exclude": ["node_modules", "dist"]

@@ -8,11 +8,18 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   password: { type: String, required: true },
-  whatsapp: {
-    phone_number_id: { type: String },
-    access_token: { type: String },
-    business_account_id: { type: String },
-  },
+  connectedAccounts: [
+    {
+      platform: {
+        type: String,
+        enum: ["whatsapp", "facebook", "instagram", "tiktok"],
+      },
+      accessToken: String,
+      refreshToken: String,
+      accountId: String,
+      meta: Object,
+    },
+  ],
 });
 
 export type UserSchema = InferSchemaType<typeof userSchema>;
