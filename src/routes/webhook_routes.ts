@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import Conversation from "../models/conversation";
 import Message from "../models/message";
 import { getIO } from "../socket";
+import User from "../models/user.model";
 
 const router = Router();
 
@@ -30,14 +31,23 @@ router.post("/", async (req: Request, res: Response) => {
   const from = message.from;
   const text = message.text?.body;
   const externalMessageId = message.id;
+  const phoneNumberId = changes?.metadata?.phone_number_id;
+  const user = await User.findOne({
+    "whatsapp.phone_number_id": phoneNumberId,
+  });
+  if (!user) return;
 
   // Find or create conversation
-  let conversation = await Conversation.findOne({ externalId: from });
+  let conversation = await Conversation.findOne({
+    externalId: from,
+    userId: user._id,
+  });
   if (!conversation) {
     conversation = new Conversation({
       platform: "whatsapp",
       externalId: from,
-      participant: [],
+      userId: user._id,
+      participant: [{ externalMessageId: from }],
     });
   }
 
