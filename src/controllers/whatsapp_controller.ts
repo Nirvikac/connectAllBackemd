@@ -16,6 +16,9 @@ export const connectWhatsApp = async (req: Request, res: Response) => {
       params: {
         client_id: process.env.META_APP_ID,
         client_secret: process.env.META_APP_SECRET,
+        redirect_uri:
+          "https://connectallbackemd.onrender.com/api/whatsapp/callback",
+
         code,
       },
     },
