@@ -28,7 +28,7 @@ export const connectWhatsApp = async (req: Request, res: Response) => {
 
   // Get the phone number ID associated with the WhatsApp Business Account
   const phoneNumbersRes = await axios.get(
-    `https://graph.facebook.com/v20.0/me/phone_numbers`,
+    `https://graph.facebook.com/v20.0/${process.env.META_APP_ID}/phone_numbers`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
