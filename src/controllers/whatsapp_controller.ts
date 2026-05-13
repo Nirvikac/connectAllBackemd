@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import axios from "axios";
 import dotenv from "dotenv";
 import User from "../models/user.model";
+import { platform } from "os";
 dotenv.config();
 
 export const connectWhatsApp = async (req: Request, res: Response) => {
@@ -11,7 +12,7 @@ export const connectWhatsApp = async (req: Request, res: Response) => {
   const userId = res.locals.user?.id;
   // Exchange the code for an access token
   console.log("USer ID:", userId);
-   const tokenRes = await axios.get(
+  const tokenRes = await axios.get(
     `https://graph.facebook.com/v20.0/oauth/access_token`,
     {
       params: {
@@ -48,9 +49,12 @@ export const connectWhatsApp = async (req: Request, res: Response) => {
   }
   // Save the access token and phone number ID to the user's record in the database
   await User.findByIdAndUpdate(userId, {
-    whatsapp: {
-      accessToken,
-      phoneNumberId,
+    $push: {
+      connectedAccounts: {
+        platform: "whatsapp",
+        accessToken,
+        phoneNumberId,
+      },
     },
   });
   try {
