@@ -10,7 +10,8 @@ export const connectWhatsApp = async (req: Request, res: Response) => {
   // In a real app, you should verify the code and handle errors properly
   const userId = res.locals.user?.id;
   // Exchange the code for an access token
-  const tokenRes = await axios.get(
+  console.log("USer ID:", userId);
+   const tokenRes = await axios.get(
     `https://graph.facebook.com/v20.0/oauth/access_token`,
     {
       params: {
@@ -38,6 +39,7 @@ export const connectWhatsApp = async (req: Request, res: Response) => {
   // In a real app, you should check if the request was successful and handle errors
   // Assuming the user has only one phone number, we take the first one. In a real app, you should handle multiple phone numbers properly.
   const phoneNumberId = phoneNumbersRes.data.data?.[0]?.id;
+  console.log("Phone Number ID:", phoneNumberId);
   if (!phoneNumberId) {
     return res.status(400).json({
       message: "No valid phone number found for the WhatsApp Business Account",
