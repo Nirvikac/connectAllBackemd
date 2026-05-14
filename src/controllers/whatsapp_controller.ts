@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import axios from "axios";
 import dotenv from "dotenv";
 import User from "../models/user.model";
-import { platform } from "os";
 dotenv.config();
 
 export const connectWhatsApp = async (req: Request, res: Response) => {
@@ -52,8 +51,8 @@ export const connectWhatsApp = async (req: Request, res: Response) => {
     $push: {
       connectedAccounts: {
         platform: "whatsapp",
-        accessToken,
-        phoneNumberId,
+        accessToken: accessToken,
+        accountId: phoneNumberId,
       },
     },
   });
